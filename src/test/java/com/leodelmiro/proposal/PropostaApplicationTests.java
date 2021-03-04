@@ -1,4 +1,4 @@
-package com.leodelmiro.proposta;
+package com.leodelmiro.proposal;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -87,6 +87,24 @@ public class ProposalControllerTest {
     }
 
     @Test
+    @DisplayName("deve retornar 422 quando documento já possuir uma proposta")
+    void shouldReturn422WhenDocumentAlreadyExists() throws Exception {
+        NewProposalRequesterRequest request = new NewProposalRequesterRequestBuilder().withDocument("404.761.395-97").withEmail("teste@teste.com")
+                .withName("Testador").withAddress("Rua dos testes").withSalary(BigDecimal.TEN).build();
+        String jsonBody = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/proposals")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody));
+
+        mockMvc.perform(post("/proposals")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+
+    @Test
     @DisplayName("deve retornar 400 quando nome for vazio")
     void shouldReturn400WhenNameBlank() throws Exception {
         NewProposalRequesterRequest request = new NewProposalRequesterRequestBuilder().withDocument("404.761.395-97").withEmail("teste@teste.com")

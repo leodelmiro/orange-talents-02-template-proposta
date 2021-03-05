@@ -2,7 +2,10 @@ package com.leodelmiro.proposal.newproposal;
 
 import com.leodelmiro.proposal.common.validation.CPForCNPJ;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
 public class NewProposalRequesterRequest {
@@ -58,7 +61,6 @@ public class NewProposalRequesterRequest {
     }
 
     public ProposalRequester toModel() {
-        return new ProposalRequester(document, email, name, address, salary
-        );
+        return new ProposalRequester(document, email, name, address, salary);
     }
 }

@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_requester")
@@ -56,5 +57,13 @@ public class ProposalRequester {
 
     public Long getId() {
         return id;
+    }
+
+    public boolean alreadyHasProposal(EntityManager entityManager) {
+        Query query = entityManager.createQuery("SELECT 1 FROM ProposalRequester r WHERE r.document = :requesterDocument");
+        query.setParameter("requesterDocument", document);
+        List<?> list = query.getResultList();
+
+        return !list.isEmpty();
     }
 }

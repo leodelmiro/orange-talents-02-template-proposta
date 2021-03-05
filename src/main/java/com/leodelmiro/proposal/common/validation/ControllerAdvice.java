@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,16 +22,24 @@ public class ControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public List<FieldMessageDTO> MethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        List<FieldMessageDTO> fieldErrorsList = new ArrayList<>();
+    public ErrorMessage handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        List<String> fieldErrorsList = new ArrayList<>();
 
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
         fieldErrors.forEach(e -> {
-            String message = messageSource.getMessage(e, LocaleContextHolder.getLocale());
-            FieldMessageDTO error = new FieldMessageDTO(e.getField(), message);
-            fieldErrorsList.add(error);
+            String message = String.format("Campo %s: %s", e.getField(), messageSource.getMessage(e, LocaleContextHolder.getLocale()));
+            fieldErrorsList.add(message);
         });
 
-        return fieldErrorsList;
+        return new ErrorMessage(fieldErrorsList);
+    }
+
+    @ExceptionHandler(ApiErrorException.class)
+    public ResponseEntity<ErrorMessage> handleApiErrorException(ApiErrorException exception) {
+        List<String> fieldErrorsList = new ArrayList<>();
+        fieldErrorsList.add(exception.getMessage());
+
+        ErrorMessage errorMessage = new ErrorMessage(fieldErrorsList);
+        return ResponseEntity.status(exception.getHttpStatus()).body(errorMessage);
     }
 }

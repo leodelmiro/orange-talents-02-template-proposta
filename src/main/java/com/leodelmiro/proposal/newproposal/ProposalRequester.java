@@ -1,18 +1,16 @@
 package com.leodelmiro.proposal.newproposal;
 
 import com.leodelmiro.proposal.common.validation.CPForCNPJ;
+import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisRequest;
+import org.apache.tomcat.jni.Address;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Entity
-@Table(name = "tb_requester")
+@Table(name = "tb_requesters")
 public class ProposalRequester {
 
     @Id
@@ -30,23 +28,29 @@ public class ProposalRequester {
     @NotBlank
     private String name;
 
-    @NotBlank
-    private String address;
+    @NotNull
+    @Embedded
+    private RequesterAddress address;
 
-    @PositiveOrZero
+    @Positive
     @NotNull
     private BigDecimal salary;
 
-    @Deprecated
+    @Enumerated
+    private ProposalStatus status;
+
+    /**
+     * @Deprecated only for framework
+     */
     public ProposalRequester() {
     }
 
-    public ProposalRequester(@NotBlank String document, @NotBlank @Email String email, @NotBlank String name, @NotBlank String address, @PositiveOrZero BigDecimal salary) {
+    public ProposalRequester(@NotBlank String document, @NotBlank @Email String email, @NotBlank String name, @NotBlank RequesterAddress address, @PositiveOrZero BigDecimal salary) {
         Assert.hasLength(document, "Documento é obrigatório!!!");
         Assert.hasLength(email, "Email é obrigatório");
         Assert.hasLength(name, "Nome é obrigatório");
-        Assert.hasLength(address, "Endereço é obrigatório");
-        Assert.state(salary.compareTo(BigDecimal.ZERO) >= 0, "Salário não pode ser negativo");
+        Assert.notNull(address, "Endereço é obrigatório");
+        Assert.state(salary.compareTo(BigDecimal.ZERO) > 0, "Salário não pode ser negativo");
 
         this.document = document;
         this.email = email;
@@ -59,11 +63,20 @@ public class ProposalRequester {
         return id;
     }
 
-    public boolean alreadyHasProposal(EntityManager entityManager) {
-        Query query = entityManager.createQuery("SELECT 1 FROM ProposalRequester r WHERE r.document = :requesterDocument");
-        query.setParameter("requesterDocument", document);
-        List<?> list = query.getResultList();
-
-        return !list.isEmpty();
+    public String getDocument() {
+        return document;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setProposalStatus(ProposalStatus status) {
+        this.status = status;
+    }
+
+    public FinancialAnalysisRequest toFinancialAnalysis() {
+        return new FinancialAnalysisRequest(document, name, id);
+    }
+
 }

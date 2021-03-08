@@ -1,7 +1,9 @@
 package com.leodelmiro.proposal.newproposal;
 
 import com.leodelmiro.proposal.common.validation.CPForCNPJ;
+import com.leodelmiro.proposal.common.validation.UniqueValue;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,6 +13,7 @@ import java.math.BigDecimal;
 public class NewProposalRequesterRequest {
 
     @CPForCNPJ
+    @UniqueValue(domainClass = ProposalRequester.class, fieldName = "document")
     @NotBlank
     private String document;
 
@@ -21,8 +24,8 @@ public class NewProposalRequesterRequest {
     @NotBlank
     private String name;
 
-    @NotBlank
-    private String address;
+    @NotNull
+    private RequesterAddressRequest address;
 
     @PositiveOrZero
     @NotNull
@@ -32,7 +35,8 @@ public class NewProposalRequesterRequest {
     public NewProposalRequesterRequest() {
     }
 
-    public NewProposalRequesterRequest(@NotBlank String document, @NotBlank @Email String email, @NotBlank String name, @NotBlank String address, @PositiveOrZero BigDecimal salary) {
+    public NewProposalRequesterRequest(@NotBlank String document, @NotBlank @Email String email, @NotBlank String name,
+                                       @NotNull @Valid RequesterAddressRequest address, @PositiveOrZero BigDecimal salary) {
         this.document = document;
         this.email = email;
         this.name = name;
@@ -52,7 +56,7 @@ public class NewProposalRequesterRequest {
         return name;
     }
 
-    public String getAddress() {
+    public RequesterAddressRequest getAddress() {
         return address;
     }
 
@@ -61,6 +65,6 @@ public class NewProposalRequesterRequest {
     }
 
     public ProposalRequester toModel() {
-        return new ProposalRequester(document, email, name, address, salary);
+        return new ProposalRequester(document, email, name, address.toModel(), salary);
     }
 }

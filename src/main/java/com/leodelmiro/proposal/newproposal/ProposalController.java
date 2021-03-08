@@ -1,7 +1,9 @@
 package com.leodelmiro.proposal.newproposal;
 
-import com.leodelmiro.proposal.common.validation.ApiErrorException;
-import org.springframework.http.HttpStatus;
+import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisClient;
+import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisResponse;
+import feign.FeignException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,21 +22,26 @@ import java.net.URI;
 public class ProposalController {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
+
+    @Autowired
+    private FinancialAnalysisClient financialAnalysisClient;
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Void> createRequester(@RequestBody @Valid NewProposalRequesterRequest request) {
+    public ResponseEntity<Void> create(@RequestBody @Valid NewProposalRequesterRequest request) {
         ProposalRequester requester = request.toModel();
-
-        if (requester.alreadyHasProposal(entityManager)) {
-            throw new ApiErrorException(HttpStatus.UNPROCESSABLE_ENTITY, "Esse documento já possui uma solicitação de proposta!");
-        }
 
         entityManager.persist(requester);
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(requester.getId()).toUri();
+        try {
+            FinancialAnalysisResponse financialAnalysis = financialAnalysisClient.financialAnalysis(requester.toFinancialAnalysis());
+            requester.setProposalStatus(financialAnalysis.statusToProposalStatus());
+        } catch (FeignException e) {
+            requester.setProposalStatus(ProposalStatus.NOT_ELIGIBLE);
+        }
 
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(requester.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
 }

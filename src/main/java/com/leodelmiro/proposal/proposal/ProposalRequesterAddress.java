@@ -26,4 +26,16 @@ public class ProposalRequesterAddress {
         this.number = number;
         this.cep = cep;
     }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public String getCep() {
+        return cep;
+    }
 }

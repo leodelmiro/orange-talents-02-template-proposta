@@ -8,10 +8,8 @@ import java.time.LocalDateTime;
 
 public class CardResponse {
 
-    private String id;
-
-    @JsonProperty("emitidoEm")
-    private LocalDateTime createdAt;
+    @JsonProperty("id")
+    private String cardNumber;
 
     @JsonProperty("titular")
     private String holder;
@@ -19,23 +17,25 @@ public class CardResponse {
     @JsonProperty("limite")
     private BigDecimal limit;
 
-    @JsonProperty("idProposta")
-    private String proposalId;
+    @JsonProperty("emitidoEm")
+    private LocalDateTime createdAt;
 
-    public CardResponse(String id, LocalDateTime createdAt, String holder, BigDecimal limit, String proposalId) {
-        this.id = id;
+    public CardResponse(Card entity) {
+        this.cardNumber = entity.getCardNumber();
+        this.holder = entity.getHolder();
+        this.limit = entity.getCardLimit();
+        this.createdAt = entity.getCreatedAt();
+    }
+
+    public CardResponse(String cardNumber, LocalDateTime createdAt, String holder, BigDecimal limit, String proposalId) {
+        this.cardNumber = cardNumber;
         this.createdAt = createdAt;
         this.holder = holder;
         this.limit = limit;
-        this.proposalId = proposalId;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getCardNumber() {
+        return cardNumber;
     }
 
     public String getHolder() {
@@ -46,23 +46,13 @@ public class CardResponse {
         return limit;
     }
 
-    public String getProposalId() {
-        return proposalId;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    @Override
-    public String toString() {
-        return "CardResponse{" +
-                "id='" + id + '\'' +
-                ", createdAt=" + createdAt +
-                ", holder='" + holder + '\'' +
-                ", limit=" + limit +
-                ", proposalId='" + proposalId + '\'' +
-                '}';
-    }
 
     public Card toModel(Proposal proposal) {
-        return new Card(id, holder, limit, createdAt, proposal);
+        return new Card(cardNumber, holder, limit, createdAt, proposal);
     }
 
 }

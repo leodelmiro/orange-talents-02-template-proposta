@@ -42,5 +42,23 @@ public class Card {
         this.proposal = proposal;
     }
 
+    public String getCardNumber() {
+        return cardNumber;
+    }
 
+    public String getHolder() {
+        return holder;
+    }
+
+    public BigDecimal getCardLimit() {
+        return cardLimit;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public Proposal getProposal() {
+        return proposal;
+    }
 }

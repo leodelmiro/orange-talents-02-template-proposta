@@ -76,8 +76,32 @@ public class Proposal {
         return document;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public ProposalRequesterAddress getAddress() {
+        return address;
+    }
+
+    public BigDecimal getSalary() {
+        return salary;
+    }
+
+    public ProposalStatus getStatus() {
+        return status;
+    }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public void setProposalStatus(ProposalStatus status) {

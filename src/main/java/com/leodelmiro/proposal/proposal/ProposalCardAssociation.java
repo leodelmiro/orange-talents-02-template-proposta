@@ -24,7 +24,7 @@ public class ProposalCardAssociation {
 
 
     @Transactional
-    @Scheduled(fixedDelay = 2000)
+    @Scheduled(fixedDelayString = "${timing.fixedDelay}", initialDelayString = "${timing.initialDelay}")
     public void associateCard() {
 
         List<Proposal> cardPendent = repository.findTop10ByStatusAndCardOrderByCreatedAtAsc(ProposalStatus.ELIGIBLE, null);

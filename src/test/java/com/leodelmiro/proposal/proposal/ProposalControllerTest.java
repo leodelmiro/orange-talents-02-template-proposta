@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,14 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -35,12 +32,6 @@ public class ProposalControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @InjectMocks
-    private ProposalController proposalController;
 
     String localhost = "http://localhost";
 
@@ -159,5 +150,24 @@ public class ProposalControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("deve retornar 200 e proposta quando encontrada")
+    void shouldReturn200AndProposalResponseWhenProposalFound() throws Exception {
+
+        mockMvc.perform(get("/proposals/0")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("name").exists());
+    }
+
+    @Test
+    @DisplayName("deve retornar 404 quando proposta não encontrada")
+    void shouldReturn404WhenProposalNotFound() throws Exception {
+
+        mockMvc.perform(get("/proposals/100"))
+                .andExpect(status().isNotFound());
     }
 }

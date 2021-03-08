@@ -2,7 +2,6 @@ package com.leodelmiro.proposal.newproposal;
 
 import com.leodelmiro.proposal.common.validation.CPForCNPJ;
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisRequest;
-import org.apache.tomcat.jni.Address;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;

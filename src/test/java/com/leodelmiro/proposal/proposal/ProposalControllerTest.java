@@ -1,8 +1,8 @@
-package com.leodelmiro.proposal.newproposal;
+package com.leodelmiro.proposal.proposal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leodelmiro.builders.NewProposalRequesterRequestBuilder;
-import com.leodelmiro.builders.RequesterAddressRequestBuilder;
+import com.leodelmiro.builders.NewProposalRequestBuilder;
+import com.leodelmiro.builders.ProposalRequesterAddressRequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("test")
-public class ProposalRequesterControllerTest {
+public class ProposalControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,7 +47,7 @@ public class ProposalRequesterControllerTest {
     @Test
     @DisplayName("deve retornar 201 quando tudo Ok e Location com o caminho")
     void shouldReturn201() throws Exception {
-        NewProposalRequesterRequest request = new NewProposalRequesterRequestBuilder().defaultValues().build();
+        NewProposalRequest request = new NewProposalRequestBuilder().defaultValues().build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post("/proposals")
@@ -61,7 +61,7 @@ public class ProposalRequesterControllerTest {
     @Test
     @DisplayName("deve retornar 400 quando algum dado for inválido")
     void shouldReturn400() throws Exception {
-        NewProposalRequesterRequest request = new NewProposalRequesterRequestBuilder().build();
+        NewProposalRequest request = new NewProposalRequestBuilder().build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post("/proposals")
@@ -73,8 +73,8 @@ public class ProposalRequesterControllerTest {
     @Test
     @DisplayName("deve retornar 400 quando documento for inválido")
     void shouldReturn400WhenDocumentIsNotCPFOrCNPJValid() throws Exception {
-        RequesterAddressRequest address = new RequesterAddressRequestBuilder().defaultValues().build();
-        NewProposalRequesterRequest request = new NewProposalRequesterRequestBuilder().withDocument("").withEmail("teste@teste.com")
+        RequesterAddressRequest address = new ProposalRequesterAddressRequestBuilder().defaultValues().build();
+        NewProposalRequest request = new NewProposalRequestBuilder().withDocument("").withEmail("teste@teste.com")
                 .withName("Testador").withAddress(address).withSalary(BigDecimal.TEN).build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
@@ -89,8 +89,8 @@ public class ProposalRequesterControllerTest {
     @CsvSource({"test", ","})
     @DisplayName("deve retornar 400 quando documento for inválido ou nulo")
     void shouldReturn400WhenEmailInvalid(String email) throws Exception {
-        RequesterAddressRequest address = new RequesterAddressRequestBuilder().defaultValues().build();
-        NewProposalRequesterRequest request = new NewProposalRequesterRequestBuilder().withDocument("404.761.395-97").withEmail(email)
+        RequesterAddressRequest address = new ProposalRequesterAddressRequestBuilder().defaultValues().build();
+        NewProposalRequest request = new NewProposalRequestBuilder().withDocument("404.761.395-97").withEmail(email)
                 .withName("Testador").withAddress(address).withSalary(BigDecimal.TEN).build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
@@ -103,8 +103,8 @@ public class ProposalRequesterControllerTest {
     @Test
     @DisplayName("deve retornar 422 quando documento já possuir uma proposta")
     void shouldReturn422WhenDocumentAlreadyExists() throws Exception {
-        RequesterAddressRequest address = new RequesterAddressRequestBuilder().defaultValues().build();
-        NewProposalRequesterRequest request = new NewProposalRequesterRequestBuilder().withDocument("404.761.395-97").withEmail("teste@teste.com")
+        RequesterAddressRequest address = new ProposalRequesterAddressRequestBuilder().defaultValues().build();
+        NewProposalRequest request = new NewProposalRequestBuilder().withDocument("404.761.395-97").withEmail("teste@teste.com")
                 .withName("Testador").withAddress(address).withSalary(BigDecimal.TEN).build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
@@ -122,8 +122,8 @@ public class ProposalRequesterControllerTest {
     @Test
     @DisplayName("deve retornar 400 quando nome for vazio")
     void shouldReturn400WhenNameBlank() throws Exception {
-        RequesterAddressRequest address = new RequesterAddressRequestBuilder().defaultValues().build();
-        NewProposalRequesterRequest request = new NewProposalRequesterRequestBuilder().withDocument("404.761.395-97").withEmail("teste@teste.com")
+        RequesterAddressRequest address = new ProposalRequesterAddressRequestBuilder().defaultValues().build();
+        NewProposalRequest request = new NewProposalRequestBuilder().withDocument("404.761.395-97").withEmail("teste@teste.com")
                 .withName(" ").withAddress(address).withSalary(BigDecimal.TEN).build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
@@ -136,7 +136,7 @@ public class ProposalRequesterControllerTest {
     @Test
     @DisplayName("deve retornar 400 quando endereco for nulo")
     void shouldReturn400WhenAddressNull() throws Exception {
-        NewProposalRequesterRequest request = new NewProposalRequesterRequestBuilder().withDocument("404.761.395-97").withEmail("teste@teste.com")
+        NewProposalRequest request = new NewProposalRequestBuilder().withDocument("404.761.395-97").withEmail("teste@teste.com")
                 .withName("Testado").withAddress(null).withSalary(BigDecimal.TEN).build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
@@ -150,8 +150,8 @@ public class ProposalRequesterControllerTest {
     @CsvSource({",", "-2000"})
     @DisplayName("deve retornar 400 quando salario for nulo ou negativo")
     void shouldReturn400WhenSalaryNullOrNegative(BigDecimal salary) throws Exception {
-        RequesterAddressRequest address = new RequesterAddressRequestBuilder().defaultValues().build();
-        NewProposalRequesterRequest request = new NewProposalRequesterRequestBuilder().withDocument("404.761.395-97").withEmail("teste@teste.com")
+        RequesterAddressRequest address = new ProposalRequesterAddressRequestBuilder().defaultValues().build();
+        NewProposalRequest request = new NewProposalRequestBuilder().withDocument("404.761.395-97").withEmail("teste@teste.com")
                 .withName("Testado").withAddress(address).withSalary(salary).build();
         String jsonBody = objectMapper.writeValueAsString(request);
 

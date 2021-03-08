@@ -1,8 +1,7 @@
-package com.leodelmiro.proposal.newproposal;
+package com.leodelmiro.proposal.proposal;
 
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisClient;
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisResponse;
-import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,21 +26,23 @@ public class ProposalController {
     @Autowired
     private FinancialAnalysisClient financialAnalysisClient;
 
+    private Proposal proposal;
+
     @PostMapping
     @Transactional
-    public ResponseEntity<Void> create(@RequestBody @Valid NewProposalRequesterRequest request) {
-        ProposalRequester requester = request.toModel();
-
-        entityManager.persist(requester);
+    public ResponseEntity<Void> create(@RequestBody @Valid NewProposalRequest request) {
+        proposal = request.toModel();
+        entityManager.persist(proposal);
 
         try {
-            FinancialAnalysisResponse financialAnalysis = financialAnalysisClient.financialAnalysis(requester.toFinancialAnalysis());
-            requester.setProposalStatus(financialAnalysis.statusToProposalStatus());
-        } catch (FeignException e) {
-            requester.setProposalStatus(ProposalStatus.NOT_ELIGIBLE);
+            FinancialAnalysisResponse financialAnalysis = financialAnalysisClient.financialAnalysis(proposal.toFinancialAnalysis());
+            proposal.setProposalStatus(financialAnalysis.statusToProposalStatus());
+        } catch (Exception e) {
+            proposal.setProposalStatus(ProposalStatus.NOT_ELIGIBLE);
+            return ResponseEntity.unprocessableEntity().build();
         }
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(requester.getId()).toUri();
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(proposal.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
 }

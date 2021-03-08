@@ -1,10 +1,10 @@
-package com.leodelmiro.proposal.newproposal;
+package com.leodelmiro.proposal.proposal;
 
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotBlank;
 
 @Embeddable
-public class RequesterAddress {
+public class ProposalRequesterAddress {
 
     @NotBlank
     private String address;
@@ -18,10 +18,10 @@ public class RequesterAddress {
     /**
      * @Deprecated only for framework
      */
-    public RequesterAddress() {
+    public ProposalRequesterAddress() {
     }
 
-    public RequesterAddress(@NotBlank String address, @NotBlank String number, @NotBlank String cep) {
+    public ProposalRequesterAddress(@NotBlank String address, @NotBlank String number, @NotBlank String cep) {
         this.address = address;
         this.number = number;
         this.cep = cep;

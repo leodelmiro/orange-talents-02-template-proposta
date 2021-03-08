@@ -1,4 +1,4 @@
-package com.leodelmiro.proposal.newproposal;
+package com.leodelmiro.proposal.proposal;
 
 import javax.validation.constraints.NotBlank;
 
@@ -31,7 +31,7 @@ public class RequesterAddressRequest {
         return cep;
     }
 
-    public RequesterAddress toModel() {
-        return new RequesterAddress(address, number, cep);
+    public ProposalRequesterAddress toModel() {
+        return new ProposalRequesterAddress(address, number, cep);
     }
 }

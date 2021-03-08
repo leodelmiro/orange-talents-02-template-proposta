@@ -1,4 +1,4 @@
-package com.leodelmiro.proposal.newproposal;
+package com.leodelmiro.proposal.proposal;
 
 import com.leodelmiro.proposal.common.validation.CPForCNPJ;
 import com.leodelmiro.proposal.common.validation.UniqueValue;
@@ -10,10 +10,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
-public class NewProposalRequesterRequest {
+public class NewProposalRequest {
 
     @CPForCNPJ
-    @UniqueValue(domainClass = ProposalRequester.class, fieldName = "document")
+    @UniqueValue(domainClass = Proposal.class, fieldName = "document")
     @NotBlank
     private String document;
 
@@ -32,11 +32,11 @@ public class NewProposalRequesterRequest {
     private BigDecimal salary;
 
     @Deprecated
-    public NewProposalRequesterRequest() {
+    public NewProposalRequest() {
     }
 
-    public NewProposalRequesterRequest(@NotBlank String document, @NotBlank @Email String email, @NotBlank String name,
-                                       @NotNull @Valid RequesterAddressRequest address, @PositiveOrZero BigDecimal salary) {
+    public NewProposalRequest(@NotBlank String document, @NotBlank @Email String email, @NotBlank String name,
+                              @NotNull @Valid RequesterAddressRequest address, @PositiveOrZero BigDecimal salary) {
         this.document = document;
         this.email = email;
         this.name = name;
@@ -64,7 +64,7 @@ public class NewProposalRequesterRequest {
         return salary;
     }
 
-    public ProposalRequester toModel() {
-        return new ProposalRequester(document, email, name, address.toModel(), salary);
+    public Proposal toModel() {
+        return new Proposal(document, email, name, address.toModel(), salary);
     }
 }

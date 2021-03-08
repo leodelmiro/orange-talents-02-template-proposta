@@ -1,42 +1,50 @@
 package com.leodelmiro.proposal.financialanalysis;
 
-import com.leodelmiro.proposal.newproposal.ProposalStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.leodelmiro.proposal.proposal.ProposalStatus;
 
-import static com.leodelmiro.proposal.newproposal.ProposalStatus.ELIGIBLE;
-import static com.leodelmiro.proposal.newproposal.ProposalStatus.NOT_ELIGIBLE;
+import static com.leodelmiro.proposal.proposal.ProposalStatus.ELIGIBLE;
+import static com.leodelmiro.proposal.proposal.ProposalStatus.NOT_ELIGIBLE;
 
 public class FinancialAnalysisResponse {
 
-    private String documento;
-    private String nome;
-    private SolicitationStatus resultadoSolicitacao;
-    private String idProposta;
+    @JsonProperty("documento")
+    private String document;
 
-    public FinancialAnalysisResponse(String documento, String nome, SolicitationStatus resultadoSolicitacao, String idProposta) {
-        this.documento = documento;
-        this.nome = nome;
-        this.resultadoSolicitacao = resultadoSolicitacao;
-        this.idProposta = idProposta;
+    @JsonProperty("nome")
+    private String name;
+
+    @JsonProperty("resultadoSolicitacao")
+    private SolicitationStatus solicitationStatus;
+
+    @JsonProperty("idProposta")
+    private String proposalId;
+
+    public FinancialAnalysisResponse(String document, String name, SolicitationStatus solicitationStatus, String proposalId) {
+        this.document = document;
+        this.name = name;
+        this.solicitationStatus = solicitationStatus;
+        this.proposalId = proposalId;
     }
 
-    public String getDocumento() {
-        return documento;
+    public String getDocument() {
+        return document;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public SolicitationStatus getResultadoSolicitacao() {
-        return resultadoSolicitacao;
+    public SolicitationStatus getSolicitationStatus() {
+        return solicitationStatus;
     }
 
-    public String getIdProposta() {
-        return idProposta;
+    public String getProposalId() {
+        return proposalId;
     }
 
     public ProposalStatus statusToProposalStatus() {
-        if (resultadoSolicitacao == SolicitationStatus.COM_RESTRICAO) {
+        if (solicitationStatus == SolicitationStatus.COM_RESTRICAO) {
             return NOT_ELIGIBLE;
         }
 

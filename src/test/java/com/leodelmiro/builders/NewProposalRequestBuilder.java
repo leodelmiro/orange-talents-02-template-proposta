@@ -1,11 +1,11 @@
 package com.leodelmiro.builders;
 
-import com.leodelmiro.proposal.newproposal.NewProposalRequesterRequest;
-import com.leodelmiro.proposal.newproposal.RequesterAddressRequest;
+import com.leodelmiro.proposal.proposal.NewProposalRequest;
+import com.leodelmiro.proposal.proposal.RequesterAddressRequest;
 
 import java.math.BigDecimal;
 
-public class NewProposalRequesterRequestBuilder {
+public class NewProposalRequestBuilder {
 
     private String document;
     private String email;
@@ -14,32 +14,32 @@ public class NewProposalRequesterRequestBuilder {
     private BigDecimal salary;
 
 
-    public NewProposalRequesterRequestBuilder withDocument(String document) {
+    public NewProposalRequestBuilder withDocument(String document) {
         this.document = document;
         return this;
     }
 
-    public NewProposalRequesterRequestBuilder withEmail(String email) {
+    public NewProposalRequestBuilder withEmail(String email) {
         this.email = email;
         return this;
     }
 
-    public NewProposalRequesterRequestBuilder withName(String name) {
+    public NewProposalRequestBuilder withName(String name) {
         this.name = name;
         return this;
     }
 
-    public NewProposalRequesterRequestBuilder withAddress(RequesterAddressRequest address) {
+    public NewProposalRequestBuilder withAddress(RequesterAddressRequest address) {
         this.address = address;
         return this;
     }
 
-    public NewProposalRequesterRequestBuilder withSalary(BigDecimal salary) {
+    public NewProposalRequestBuilder withSalary(BigDecimal salary) {
         this.salary = salary;
         return this;
     }
 
-    public NewProposalRequesterRequestBuilder defaultValues() {
+    public NewProposalRequestBuilder defaultValues() {
         this.document = "404.761.395-97";
         this.email = "test@test.com";
         this.name = "Testador";
@@ -48,7 +48,7 @@ public class NewProposalRequesterRequestBuilder {
         return this;
     }
 
-    public NewProposalRequesterRequest build() {
-        return new NewProposalRequesterRequest(document, email, name, address, salary);
+    public NewProposalRequest build() {
+        return new NewProposalRequest(document, email, name, address, salary);
     }
 }

@@ -1,28 +1,28 @@
 package com.leodelmiro.builders;
 
-import com.leodelmiro.proposal.newproposal.RequesterAddressRequest;
+import com.leodelmiro.proposal.proposal.RequesterAddressRequest;
 
-public class RequesterAddressRequestBuilder {
+public class ProposalRequesterAddressRequestBuilder {
     private String address;
     private String number;
     private String cep;
 
-    public RequesterAddressRequestBuilder withAddress(String address) {
+    public ProposalRequesterAddressRequestBuilder withAddress(String address) {
         this.address = address;
         return this;
     }
 
-    public RequesterAddressRequestBuilder withNumber(String number) {
+    public ProposalRequesterAddressRequestBuilder withNumber(String number) {
         this.number = number;
         return this;
     }
 
-    public RequesterAddressRequestBuilder withCep(String cep) {
+    public ProposalRequesterAddressRequestBuilder withCep(String cep) {
         this.cep = cep;
         return this;
     }
 
-    public RequesterAddressRequestBuilder defaultValues() {
+    public ProposalRequesterAddressRequestBuilder defaultValues() {
         this.address = "Rua dos Testes";
         this.number = "90";
         this.cep = "11740000";

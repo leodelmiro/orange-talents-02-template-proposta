@@ -2,8 +2,13 @@ package com.leodelmiro.proposal.proposal;
 
 import com.leodelmiro.proposal.cards.Card;
 import com.leodelmiro.proposal.cards.CardRequest;
+import com.leodelmiro.proposal.cards.CardResponse;
+import com.leodelmiro.proposal.cards.CardsClient;
 import com.leodelmiro.proposal.common.validation.CPForCNPJ;
+import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisClient;
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisRequest;
+import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
@@ -76,12 +81,12 @@ public class Proposal {
         return document;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public ProposalRequesterAddress getAddress() {
@@ -104,8 +109,18 @@ public class Proposal {
         return createdAt;
     }
 
-    public void setProposalStatus(ProposalStatus status) {
-        this.status = status;
+    public void updateStatus(FinancialAnalysisClient client) {
+        try {
+            FinancialAnalysisResponse response = client.financialAnalysis(toFinancialAnalysis());
+            this.status = response.statusToProposalStatus();
+        } catch (Exception e) {
+            this.status = ProposalStatus.NOT_ELIGIBLE;
+        }
+    }
+
+    public void associateCard(CardsClient client) throws Exception{
+        CardResponse response = client.getCard(toCardRequest());
+        this.card = response.toModel(this);
     }
 
     public void setCard(Card card) {

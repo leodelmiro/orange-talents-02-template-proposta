@@ -1,7 +1,6 @@
 package com.leodelmiro.proposal.proposal;
 
 import com.leodelmiro.proposal.common.validation.CPForCNPJ;
-import com.leodelmiro.proposal.common.validation.UniqueValue;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
@@ -13,7 +12,6 @@ import java.math.BigDecimal;
 public class NewProposalRequest {
 
     @CPForCNPJ
-    @UniqueValue(domainClass = Proposal.class, fieldName = "document")
     @NotBlank
     private String document;
 

@@ -1,4 +1,4 @@
-package com.leodelmiro.proposal.common.validation;
+package com.leodelmiro.proposal.common.exception;
 
 import java.util.Collection;
 

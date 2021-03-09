@@ -10,4 +10,6 @@ import java.util.List;
 public interface ProposalRepository extends JpaRepository<Proposal, Long> {
 
     List<Proposal> findTop10ByStatusAndCardOrderByCreatedAtAsc(ProposalStatus status, Card card);
+
+    Boolean existsByDocument(String document);
 }

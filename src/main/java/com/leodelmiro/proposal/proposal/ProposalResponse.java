@@ -14,6 +14,7 @@ public class ProposalResponse {
     private String name;
     private RequesterAddressResponse address;
     private BigDecimal salary;
+    private ProposalStatus proposalStatus;
     private CardResponse card;
     private LocalDateTime createdAt;
 
@@ -24,6 +25,7 @@ public class ProposalResponse {
         this.name = entity.getName();
         this.address = new RequesterAddressResponse(entity.getAddress());
         this.salary = entity.getSalary();
+        this.proposalStatus = entity.getStatus();
         if (entity.getCard() != null) this.card = new CardResponse(entity.getCard());
         this.createdAt = entity.getCreatedAt();
     }
@@ -50,6 +52,10 @@ public class ProposalResponse {
 
     public BigDecimal getSalary() {
         return salary;
+    }
+
+    public ProposalStatus getProposalStatus() {
+        return proposalStatus;
     }
 
     public CardResponse getCard() {

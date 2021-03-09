@@ -20,8 +20,8 @@ import java.util.Optional;
 @RequestMapping("/proposals")
 public class ProposalController {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private ProposalRepository repository;
 
     @Autowired
     private FinancialAnalysisClient financialAnalysisClient;
@@ -29,16 +29,13 @@ public class ProposalController {
     @PostMapping
     @Transactional
     public ResponseEntity<Void> create(@RequestBody @Valid NewProposalRequest request) {
-        Proposal proposal = request.toModel();
-        entityManager.persist(proposal);
-
-        try {
-            FinancialAnalysisResponse financialAnalysis = financialAnalysisClient.financialAnalysis(proposal.toFinancialAnalysis());
-            proposal.setProposalStatus(financialAnalysis.statusToProposalStatus());
-        } catch (Exception e) {
-            proposal.setProposalStatus(ProposalStatus.NOT_ELIGIBLE);
+        if (repository.existsByDocument(request.getDocument())) {
             return ResponseEntity.unprocessableEntity().build();
         }
+
+        Proposal proposal = repository.save(request.toModel());
+
+        proposal.updateStatus(financialAnalysisClient);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(proposal.getId()).toUri();
         return ResponseEntity.created(uri).build();
@@ -46,7 +43,7 @@ public class ProposalController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
-        Proposal possibleProposal = Optional.ofNullable(entityManager.find(Proposal.class, id))
+        Proposal possibleProposal = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return ResponseEntity.ok(new ProposalResponse(possibleProposal));

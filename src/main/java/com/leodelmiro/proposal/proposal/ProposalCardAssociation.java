@@ -1,6 +1,5 @@
 package com.leodelmiro.proposal.proposal;
 
-import com.leodelmiro.proposal.cards.CardResponse;
 import com.leodelmiro.proposal.cards.CardsClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +32,7 @@ public class ProposalCardAssociation {
             Proposal proposal = cardPendent.get(0);
 
             try {
-                CardResponse response = cardsClient.getCard(proposal.toCardRequest());
-                proposal.setCard(response.toModel(proposal));
+                proposal.associateCard(cardsClient);
                 repository.save(proposal);
                 cardPendent.remove(0);
 

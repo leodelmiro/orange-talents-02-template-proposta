@@ -5,12 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
+@Component
 public class ProposalCardAssociation {
 
     @Autowired
@@ -26,15 +26,15 @@ public class ProposalCardAssociation {
     @Scheduled(fixedDelayString = "${timing.fixedDelay}", initialDelayString = "${timing.initialDelay}")
     public void associateCard() {
 
-        List<Proposal> cardPendent = repository.findTop10ByStatusAndCardOrderByCreatedAtAsc(ProposalStatus.ELIGIBLE, null);
+        List<Proposal> pendentsCard = repository.findTop10ByStatusAndCardOrderByCreatedAtAsc(ProposalStatus.ELIGIBLE, null);
 
-        if (!cardPendent.isEmpty()) {
-            Proposal proposal = cardPendent.get(0);
+        if (!pendentsCard.isEmpty()) {
+            Proposal proposal = pendentsCard.get(0);
 
             try {
                 proposal.associateCard(cardsClient);
                 repository.save(proposal);
-                cardPendent.remove(0);
+                pendentsCard.remove(0);
 
                 log.info("Cartão cadastrado com sucesso!");
             } catch (Exception e) {

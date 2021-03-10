@@ -1,4 +1,4 @@
-package com.leodelmiro.builders;
+package com.leodelmiro.proposal.builders;
 
 import com.leodelmiro.proposal.proposal.RequesterAddressRequest;
 

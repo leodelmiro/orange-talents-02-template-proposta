@@ -1,8 +1,8 @@
 package com.leodelmiro.proposal.proposal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leodelmiro.builders.NewProposalRequestBuilder;
-import com.leodelmiro.builders.ProposalRequesterAddressRequestBuilder;
+import com.leodelmiro.proposal.builders.NewProposalRequestBuilder;
+import com.leodelmiro.proposal.builders.ProposalRequesterAddressRequestBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -54,8 +54,9 @@ public class Proposal {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     /**
-     * @Deprecated only for framework
+     * @Deprecated for framework use only
      */
+    @Deprecated
     public Proposal() {
     }
 

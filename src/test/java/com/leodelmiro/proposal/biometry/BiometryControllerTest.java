@@ -1,0 +1,75 @@
+package com.leodelmiro.proposal.biometry;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leodelmiro.proposal.builders.NewProposalRequestBuilder;
+import com.leodelmiro.proposal.proposal.NewProposalRequest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+@Transactional
+public class BiometryControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    String localhost = "http://localhost";
+
+    @Test
+    @DisplayName("deve retornar 201 quando tudo Ok e Location com o caminho")
+    void shouldReturn201() throws Exception {
+        NewBiometryRequest request = new NewBiometryRequest("ZmluZ2VycHJpbnQ=");
+        String jsonBody = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/biometrics/0")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody))
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"))
+                .andExpect(header().string("Location", localhost + "/biometrics/0/1"));
+    }
+
+    @Test
+    @DisplayName("deve retornar 400 quando algum dado for inválido")
+    void shouldReturn400() throws Exception {
+        NewBiometryRequest request = new NewBiometryRequest(" ");
+        String jsonBody = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/biometrics/0")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    @DisplayName("deve retornar 404 quando cartão informado não for encontrado")
+    void shouldReturn404WhenCardNotFound() throws Exception {
+        NewBiometryRequest request = new NewBiometryRequest("ZmluZ2VycHJpbnQ=");
+        String jsonBody = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/biometrics/100")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody))
+                .andExpect(status().isNotFound());
+    }
+
+
+
+}

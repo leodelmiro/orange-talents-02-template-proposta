@@ -29,8 +29,9 @@ public class Card {
 
     /**
      *
-     * @Deprecated only form framework
+     * @Deprecated for framework use only
      */
+    @Deprecated
     public Card() {
     }
 

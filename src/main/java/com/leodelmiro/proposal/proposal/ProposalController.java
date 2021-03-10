@@ -17,7 +17,7 @@ import java.net.URI;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/proposals")
+@RequestMapping("/api/proposals")
 public class ProposalController {
 
     @Autowired

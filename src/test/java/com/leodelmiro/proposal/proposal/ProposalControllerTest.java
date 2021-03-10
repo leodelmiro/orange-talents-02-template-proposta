@@ -33,7 +33,7 @@ public class ProposalControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    String localhost = "http://localhost";
+    String localhost = "http://localhost/api";
 
     @Test
     @DisplayName("deve retornar 201 quando tudo Ok e Location com o caminho")
@@ -41,7 +41,7 @@ public class ProposalControllerTest {
         NewProposalRequest request = new NewProposalRequestBuilder().defaultValues().build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/proposals")
+        mockMvc.perform(post("/api/proposals")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isCreated())
@@ -55,7 +55,7 @@ public class ProposalControllerTest {
         NewProposalRequest request = new NewProposalRequestBuilder().build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/proposals")
+        mockMvc.perform(post("/api/proposals")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isBadRequest());
@@ -69,7 +69,7 @@ public class ProposalControllerTest {
                 .withName("Testador").withAddress(address).withSalary(BigDecimal.TEN).build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/proposals")
+        mockMvc.perform(post("/api/proposals")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isBadRequest());
@@ -85,7 +85,7 @@ public class ProposalControllerTest {
                 .withName("Testador").withAddress(address).withSalary(BigDecimal.TEN).build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/proposals")
+        mockMvc.perform(post("/api/proposals")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isBadRequest());
@@ -99,11 +99,11 @@ public class ProposalControllerTest {
                 .withName("Testador").withAddress(address).withSalary(BigDecimal.TEN).build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/proposals")
+        mockMvc.perform(post("/api/proposals")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody));
 
-        mockMvc.perform(post("/proposals")
+        mockMvc.perform(post("/api/proposals")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isUnprocessableEntity());
@@ -118,7 +118,7 @@ public class ProposalControllerTest {
                 .withName(" ").withAddress(address).withSalary(BigDecimal.TEN).build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/proposals")
+        mockMvc.perform(post("/api/proposals")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isBadRequest());
@@ -131,7 +131,7 @@ public class ProposalControllerTest {
                 .withName("Testado").withAddress(null).withSalary(BigDecimal.TEN).build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/proposals")
+        mockMvc.perform(post("/api/proposals")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isBadRequest());
@@ -146,7 +146,7 @@ public class ProposalControllerTest {
                 .withName("Testado").withAddress(address).withSalary(salary).build();
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/proposals")
+        mockMvc.perform(post("/api/proposals")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isBadRequest());
@@ -156,7 +156,7 @@ public class ProposalControllerTest {
     @DisplayName("deve retornar 200 e proposta quando encontrada")
     void shouldReturn200AndProposalResponseWhenProposalFound() throws Exception {
 
-        mockMvc.perform(get("/proposals/0")
+        mockMvc.perform(get("/api/proposals/0")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").exists())
@@ -167,7 +167,7 @@ public class ProposalControllerTest {
     @DisplayName("deve retornar 404 quando proposta não encontrada")
     void shouldReturn404WhenProposalNotFound() throws Exception {
 
-        mockMvc.perform(get("/proposals/100"))
+        mockMvc.perform(get("/api/proposals/100"))
                 .andExpect(status().isNotFound());
     }
 }

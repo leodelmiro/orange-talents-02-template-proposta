@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/biometrics")
+@RequestMapping("/api/biometrics")
 public class BiometryController {
 
     @PersistenceContext

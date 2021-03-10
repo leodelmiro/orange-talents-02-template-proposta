@@ -29,7 +29,7 @@ public class BiometryControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    String localhost = "http://localhost";
+    String localhost = "http://localhost/api";
 
     @Test
     @DisplayName("deve retornar 201 quando tudo Ok e Location com o caminho")
@@ -37,7 +37,7 @@ public class BiometryControllerTest {
         NewBiometryRequest request = new NewBiometryRequest("ZmluZ2VycHJpbnQ=");
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/biometrics/0")
+        mockMvc.perform(post("/api/biometrics/0")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isCreated())
@@ -51,7 +51,7 @@ public class BiometryControllerTest {
         NewBiometryRequest request = new NewBiometryRequest(" ");
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/biometrics/0")
+        mockMvc.perform(post("/api/biometrics/0")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isBadRequest());
@@ -64,7 +64,7 @@ public class BiometryControllerTest {
         NewBiometryRequest request = new NewBiometryRequest("ZmluZ2VycHJpbnQ=");
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/biometrics/100")
+        mockMvc.perform(post("/api/biometrics/100")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isNotFound());

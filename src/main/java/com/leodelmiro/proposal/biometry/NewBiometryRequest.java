@@ -1,12 +1,14 @@
 package com.leodelmiro.proposal.biometry;
 
 import com.leodelmiro.proposal.cards.Card;
+import com.leodelmiro.proposal.common.validation.IsBase64;
 
 import javax.validation.constraints.NotBlank;
 
 public class NewBiometryRequest {
 
     @NotBlank
+    @IsBase64
     private String fingerprint;
 
     /**

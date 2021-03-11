@@ -1,8 +1,6 @@
 package com.leodelmiro.proposal.biometry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leodelmiro.proposal.builders.NewProposalRequestBuilder;
-import com.leodelmiro.proposal.proposal.NewProposalRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +50,19 @@ public class BiometryControllerTest {
     @WithMockUser
     void shouldReturn400() throws Exception {
         NewBiometryRequest request = new NewBiometryRequest(" ");
+        String jsonBody = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(post("/api/biometrics/0")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonBody))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("deve retornar 400 quando não for Base64")
+    @WithMockUser
+    void shouldReturn400WhenNotBase64Fingerprint() throws Exception {
+        NewBiometryRequest request = new NewBiometryRequest(";;;;;;;;;;;;");
         String jsonBody = objectMapper.writeValueAsString(request);
 
         mockMvc.perform(post("/api/biometrics/0")

@@ -13,18 +13,10 @@ public class LoginResponse {
     @JsonProperty("expires_in")
     private Integer expiresIn;
 
-    @JsonProperty("refresh_token")
-    private String refreshToken;
-
-    @JsonProperty("refresh_expires_in")
-    private Integer refreshExpiresIn;
-
-    public LoginResponse(String tokenType, String accessToken, Integer expiresIn, String refreshToken, Integer refreshExpiresIn) {
+    public LoginResponse(String tokenType, String accessToken, Integer expiresIn) {
         this.tokenType = tokenType;
         this.accessToken = accessToken;
         this.expiresIn = expiresIn;
-        this.refreshToken = refreshToken;
-        this.refreshExpiresIn = refreshExpiresIn;
     }
 
 }

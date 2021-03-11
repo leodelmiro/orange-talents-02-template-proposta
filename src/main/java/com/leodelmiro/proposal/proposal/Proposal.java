@@ -2,7 +2,7 @@ package com.leodelmiro.proposal.proposal;
 
 import com.leodelmiro.proposal.cards.Card;
 import com.leodelmiro.proposal.cards.CardRequest;
-import com.leodelmiro.proposal.cards.CardResponse;
+import com.leodelmiro.proposal.cards.CardApiResponse;
 import com.leodelmiro.proposal.cards.CardsClient;
 import com.leodelmiro.proposal.common.validation.CPForCNPJ;
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisClient;
@@ -115,7 +115,7 @@ public class Proposal {
     }
 
     public void associateCard(CardsClient client) {
-        CardResponse response = client.getCard(toCardRequest());
+        CardApiResponse response = client.getCard(toCardRequest());
         this.card = response.toModel(this);
     }
 

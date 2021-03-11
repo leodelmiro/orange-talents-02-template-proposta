@@ -1,6 +1,5 @@
 package com.leodelmiro.proposal.proposal;
 
-import com.leodelmiro.proposal.cards.Card;
 import com.leodelmiro.proposal.cards.CardResponse;
 
 import java.math.BigDecimal;

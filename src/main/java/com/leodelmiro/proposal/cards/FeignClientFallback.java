@@ -7,7 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Component
 public class FeignClientFallback implements CardsClient {
     @Override
-    public CardResponse getCard(CardRequest request) {
+    public CardApiResponse getCard(CardRequest request) {
         throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
                 "Erro ao associar cartão, tente novamente!");
     }

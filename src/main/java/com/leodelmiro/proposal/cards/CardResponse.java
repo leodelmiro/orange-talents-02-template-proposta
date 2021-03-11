@@ -1,23 +1,18 @@
 package com.leodelmiro.proposal.cards;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.leodelmiro.proposal.proposal.Proposal;
+import com.leodelmiro.proposal.biometry.BiometryResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CardResponse {
 
-    @JsonProperty("id")
     private String cardNumber;
-
-    @JsonProperty("titular")
     private String holder;
-
-    @JsonProperty("limite")
     private BigDecimal limit;
-
-    @JsonProperty("emitidoEm")
+    private Set<BiometryResponse> biometrics;
     private LocalDateTime createdAt;
 
     public CardResponse(Card entity) {
@@ -25,13 +20,7 @@ public class CardResponse {
         this.holder = entity.getHolder();
         this.limit = entity.getCardLimit();
         this.createdAt = entity.getCreatedAt();
-    }
-
-    public CardResponse(String cardNumber, LocalDateTime createdAt, String holder, BigDecimal limit, String proposalId) {
-        this.cardNumber = cardNumber;
-        this.createdAt = createdAt;
-        this.holder = holder;
-        this.limit = limit;
+        this.biometrics = entity.getBiometrics().stream().map(BiometryResponse::new).collect(Collectors.toSet());
     }
 
     public String getCardNumber() {
@@ -50,9 +39,7 @@ public class CardResponse {
         return createdAt;
     }
 
-
-    public Card toModel(Proposal proposal) {
-        return new Card(cardNumber, holder, limit, createdAt, proposal);
+    public Set<BiometryResponse> getBiometrics() {
+        return biometrics;
     }
-
 }

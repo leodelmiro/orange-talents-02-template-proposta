@@ -12,13 +12,13 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/biometrics")
+@RequestMapping("/api")
 public class BiometryController {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @PostMapping("/{cardId}")
+    @PostMapping("/cards/{cardId}/biometrics")
     @Transactional
     public ResponseEntity<?> create(@PathVariable Long cardId, @RequestBody @Valid NewBiometryRequest request) {
         Card possibleCard = entityManager.find(Card.class, cardId);
@@ -29,7 +29,7 @@ public class BiometryController {
         Biometry biometry = request.toModel(possibleCard);
         entityManager.persist(biometry);
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(biometry.getId()).toUri();
+        URI uri = ServletUriComponentsBuilder.fromCurrentServletMapping().pathSegment("biometrics/{id}").buildAndExpand(biometry.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
 }

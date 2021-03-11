@@ -7,5 +7,5 @@ import org.springframework.web.bind.annotation.PostMapping;
 public interface CardsClient {
 
     @PostMapping
-    CardResponse getCard(CardRequest request);
+    CardApiResponse getCard(CardRequest request);
 }

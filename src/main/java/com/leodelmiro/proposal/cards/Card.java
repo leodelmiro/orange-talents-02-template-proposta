@@ -1,10 +1,13 @@
 package com.leodelmiro.proposal.cards;
 
+import com.leodelmiro.proposal.biometry.Biometry;
 import com.leodelmiro.proposal.proposal.Proposal;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_cards")
@@ -21,11 +24,14 @@ public class Card {
     private BigDecimal cardLimit;
 
     @Column(updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToOne
     @JoinColumn(name = "proposal_id")
     private Proposal proposal;
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.PERSIST)
+    private Set<Biometry> biometrics = new HashSet<>();
 
     /**
      *
@@ -61,5 +67,9 @@ public class Card {
 
     public Proposal getProposal() {
         return proposal;
+    }
+
+    public Set<Biometry> getBiometrics() {
+        return biometrics;
     }
 }

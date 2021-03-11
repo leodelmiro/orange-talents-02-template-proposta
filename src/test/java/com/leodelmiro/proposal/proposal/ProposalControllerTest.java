@@ -39,8 +39,6 @@ public class ProposalControllerTest {
     @Autowired
     ProposalRepository proposalRepository;
 
-    String localhost = "http://localhost/api";
-
     @Test
     @DisplayName("deve retornar 201 quando tudo Ok e Location com o caminho")
     @WithMockUser

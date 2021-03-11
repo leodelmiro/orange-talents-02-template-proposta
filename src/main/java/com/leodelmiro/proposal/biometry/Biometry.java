@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "tb_biometrics")
@@ -21,7 +22,7 @@ public class Biometry {
     private String fingerprint;
 
     @NotNull
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "card_id")
     private Card card;
 
@@ -35,7 +36,6 @@ public class Biometry {
     public Biometry() {
 
     }
-
     public Biometry(@NotBlank String fingerprint, @NotNull Card card) {
         Assert.hasLength(fingerprint, "Digital é obrigatória!");
         Assert.notNull(card, "Cartão é obrigatório!");
@@ -46,5 +46,26 @@ public class Biometry {
 
     public Long getId() {
         return id;
+    }
+
+    public String getFingerprint() {
+        return fingerprint;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Biometry biometry = (Biometry) o;
+        return Objects.equals(fingerprint, biometry.fingerprint) && Objects.equals(card, biometry.card);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fingerprint, card);
     }
 }

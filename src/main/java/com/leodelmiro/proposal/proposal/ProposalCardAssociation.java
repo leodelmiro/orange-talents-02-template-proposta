@@ -31,15 +31,11 @@ public class ProposalCardAssociation {
         if (!pendentsCard.isEmpty()) {
             Proposal proposal = pendentsCard.get(0);
 
-            try {
-                proposal.associateCard(cardsClient);
-                repository.save(proposal);
-                pendentsCard.remove(0);
+            proposal.associateCard(cardsClient);
+            repository.save(proposal);
+            pendentsCard.remove(0);
 
-                log.info("Cartão cadastrado com sucesso!");
-            } catch (Exception e) {
-                log.error("Erro na api de cartões. " + e.getMessage());
-            }
+            log.info("Cartão cadastrado com sucesso!");
         }
     }
 }

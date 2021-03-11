@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,7 @@ public class BiometryControllerTest {
 
     @Test
     @DisplayName("deve retornar 201 quando tudo Ok e Location com o caminho")
+    @WithMockUser
     void shouldReturn201() throws Exception {
         NewBiometryRequest request = new NewBiometryRequest("ZmluZ2VycHJpbnQ=");
         String jsonBody = objectMapper.writeValueAsString(request);
@@ -47,6 +49,7 @@ public class BiometryControllerTest {
 
     @Test
     @DisplayName("deve retornar 400 quando algum dado for inválido")
+    @WithMockUser
     void shouldReturn400() throws Exception {
         NewBiometryRequest request = new NewBiometryRequest(" ");
         String jsonBody = objectMapper.writeValueAsString(request);
@@ -60,6 +63,7 @@ public class BiometryControllerTest {
 
     @Test
     @DisplayName("deve retornar 404 quando cartão informado não for encontrado")
+    @WithMockUser
     void shouldReturn404WhenCardNotFound() throws Exception {
         NewBiometryRequest request = new NewBiometryRequest("ZmluZ2VycHJpbnQ=");
         String jsonBody = objectMapper.writeValueAsString(request);

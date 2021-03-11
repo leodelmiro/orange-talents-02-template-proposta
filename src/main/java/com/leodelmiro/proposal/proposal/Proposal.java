@@ -8,7 +8,6 @@ import com.leodelmiro.proposal.common.validation.CPForCNPJ;
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisClient;
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisRequest;
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisResponse;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
@@ -46,7 +45,7 @@ public class Proposal {
     @Enumerated
     private ProposalStatus status;
 
-    @OneToOne(cascade=CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "card_id")
     private Card card;
 
@@ -67,7 +66,7 @@ public class Proposal {
         Assert.notNull(address, "Endereço é obrigatório");
         Assert.state(salary.compareTo(BigDecimal.ZERO) > 0, "Salário não pode ser negativo");
 
-        this.document = document;
+        this.document = document.replaceAll("[.-]", "");
         this.email = email;
         this.name = name;
         this.address = address;
@@ -111,21 +110,13 @@ public class Proposal {
     }
 
     public void updateStatus(FinancialAnalysisClient client) {
-        try {
-            FinancialAnalysisResponse response = client.financialAnalysis(toFinancialAnalysis());
-            this.status = response.statusToProposalStatus();
-        } catch (Exception e) {
-            this.status = ProposalStatus.NOT_ELIGIBLE;
-        }
+        FinancialAnalysisResponse response = client.financialAnalysis(toFinancialAnalysis());
+        this.status = response.statusToProposalStatus();
     }
 
-    public void associateCard(CardsClient client) throws Exception{
+    public void associateCard(CardsClient client) {
         CardResponse response = client.getCard(toCardRequest());
         this.card = response.toModel(this);
-    }
-
-    public void setCard(Card card) {
-        this.card = card;
     }
 
     public FinancialAnalysisRequest toFinancialAnalysis() {

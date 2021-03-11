@@ -35,7 +35,7 @@ public class NewProposalRequest {
 
     public NewProposalRequest(@NotBlank String document, @NotBlank @Email String email, @NotBlank String name,
                               @NotNull @Valid RequesterAddressRequest address, @PositiveOrZero BigDecimal salary) {
-        this.document = document;
+        this.document = document.replaceAll("[.-]", "");
         this.email = email;
         this.name = name;
         this.address = address;

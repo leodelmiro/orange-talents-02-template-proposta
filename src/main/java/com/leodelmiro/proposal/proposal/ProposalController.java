@@ -43,9 +43,12 @@ public class ProposalController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
-        Proposal possibleProposal = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Optional<Proposal> possibleProposal = repository.findById(id);
 
-        return ResponseEntity.ok(new ProposalResponse(possibleProposal));
+        if (possibleProposal.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(new ProposalResponse(possibleProposal.get()));
     }
 }

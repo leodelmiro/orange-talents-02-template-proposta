@@ -8,39 +8,22 @@ import static com.leodelmiro.proposal.proposal.ProposalStatus.NOT_ELIGIBLE;
 
 public class FinancialAnalysisResponse {
 
-    @JsonProperty("documento")
-    private String document;
-
-    @JsonProperty("nome")
-    private String name;
-
     @JsonProperty("resultadoSolicitacao")
     private SolicitationStatus solicitationStatus;
 
-    @JsonProperty("idProposta")
-    private String proposalId;
+    /**
+     * @Deprecated for framework use only
+     */
+    @Deprecated
+    public FinancialAnalysisResponse() {
+    }
 
-    public FinancialAnalysisResponse(String document, String name, SolicitationStatus solicitationStatus, String proposalId) {
-        this.document = document;
-        this.name = name;
+    public FinancialAnalysisResponse(SolicitationStatus solicitationStatus) {
         this.solicitationStatus = solicitationStatus;
-        this.proposalId = proposalId;
-    }
-
-    public String getDocument() {
-        return document;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public SolicitationStatus getSolicitationStatus() {
         return solicitationStatus;
-    }
-
-    public String getProposalId() {
-        return proposalId;
     }
 
     public ProposalStatus statusToProposalStatus() {

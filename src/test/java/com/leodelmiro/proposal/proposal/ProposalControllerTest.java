@@ -176,7 +176,7 @@ public class ProposalControllerTest {
     @WithMockUser
     void shouldReturn200AndProposalResponseWhenProposalFound() throws Exception {
 
-        mockMvc.perform(get("/api/proposals/0")
+        mockMvc.perform(get("/api/proposals/1")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").exists())

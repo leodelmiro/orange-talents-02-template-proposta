@@ -35,7 +35,7 @@ public class BiometryControllerTest {
         NewBiometryRequest request = new NewBiometryRequest("ZmluZ2VycHJpbnQ=");
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/cards/0/biometrics")
+        mockMvc.perform(post("/api/cards/1/biometrics")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isCreated())
@@ -49,7 +49,7 @@ public class BiometryControllerTest {
         NewBiometryRequest request = new NewBiometryRequest(" ");
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/cards/0/biometrics")
+        mockMvc.perform(post("/api/cards/1/biometrics")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isBadRequest());
@@ -62,7 +62,7 @@ public class BiometryControllerTest {
         NewBiometryRequest request = new NewBiometryRequest(";;;;;;;;;;;;");
         String jsonBody = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/cards/0/biometrics")
+        mockMvc.perform(post("/api/cards/1/biometrics")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonBody))
                 .andExpect(status().isBadRequest());

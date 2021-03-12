@@ -1,6 +1,7 @@
 package com.leodelmiro.proposal.cards;
 
 import com.leodelmiro.proposal.biometry.Biometry;
+import com.leodelmiro.proposal.block.CardBlock;
 import com.leodelmiro.proposal.proposal.Proposal;
 
 import javax.persistence.*;
@@ -32,6 +33,9 @@ public class Card {
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.PERSIST)
     private Set<Biometry> biometrics = new HashSet<>();
+
+    @OneToOne(mappedBy = "card", cascade = CascadeType.MERGE)
+    private CardBlock cardBlock;
 
     /**
      *
@@ -71,5 +75,9 @@ public class Card {
 
     public Set<Biometry> getBiometrics() {
         return biometrics;
+    }
+
+    public boolean isAlreadyBlocked() {
+        return cardBlock != null;
     }
 }

@@ -42,7 +42,7 @@ public class Proposal {
     @NotNull
     private BigDecimal salary;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private ProposalStatus status;
 
     @OneToOne(cascade = CascadeType.PERSIST)

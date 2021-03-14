@@ -2,6 +2,8 @@ package com.leodelmiro.proposal.cards;
 
 import com.leodelmiro.proposal.biometry.Biometry;
 import com.leodelmiro.proposal.block.CardBlock;
+import com.leodelmiro.proposal.block.CardBlockRequest;
+import com.leodelmiro.proposal.block.CardBlockResponse;
 import com.leodelmiro.proposal.proposal.Proposal;
 
 import javax.persistence.*;
@@ -23,6 +25,9 @@ public class Card {
     private String holder;
 
     private BigDecimal cardLimit;
+
+    @Enumerated(EnumType.STRING)
+    private CardStatus status = CardStatus.ACTIVE;
 
     @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -77,7 +82,16 @@ public class Card {
         return biometrics;
     }
 
+
     public boolean isAlreadyBlocked() {
-        return cardBlock != null;
+        return status == CardStatus.BLOCKED;
     }
+
+    public void updateStatus(CardsClient client, CardBlockRequest request) throws Exception{
+        CardBlockResponse response = client.blockCard(id.toString(), request);
+
+        this.status = response.toCardStatus();
+    }
+
+
 }

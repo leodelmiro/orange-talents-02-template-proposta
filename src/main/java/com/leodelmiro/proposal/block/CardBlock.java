@@ -1,10 +1,12 @@
 package com.leodelmiro.proposal.block;
 
 import com.leodelmiro.proposal.cards.Card;
-import org.springframework.test.context.junit.jupiter.EnabledIf;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,6 +17,7 @@ public class CardBlock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @OneToOne
     @JoinColumn(name = "card_id")
     private Card card;
@@ -36,7 +39,11 @@ public class CardBlock {
 
     }
 
-    public CardBlock(Card card, String userIp, String userAgent) {
+    public CardBlock(@NotNull @Valid Card card, @NotBlank String userIp, @NotBlank String userAgent) {
+        Assert.notNull(card, "Cartão é obrigatório!");
+        Assert.hasLength(userIp, "Ip do usuário é obrigatório!");
+        Assert.hasLength(userAgent, "User Agent do usuário é obrigatório!");
+
         this.card = card;
         this.userIp = userIp;
         this.userAgent = userAgent;

@@ -1,7 +1,9 @@
 package com.leodelmiro.proposal.travelnotice;
 
 import com.leodelmiro.proposal.cards.Card;
+import com.leodelmiro.proposal.cards.CardsClient;
 import com.leodelmiro.proposal.common.utils.ClientHostResolver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,9 @@ public class TravelNoticeController {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private CardsClient cardsClient;
 
     @PostMapping("/{cardId}/travelnotices")
     @Transactional
@@ -38,8 +43,13 @@ public class TravelNoticeController {
             return ResponseEntity.badRequest().build();
         }
 
-        TravelNotice travelNotice = request.toModel(card, userAgent, userIp);
-        entityManager.persist(travelNotice);
+        try {
+            TravelNotice travelNotice = request.toModel(card, userAgent, userIp);
+            TravelNoticesApiResponse apiResponse = cardsClient.notices(cardId.toString(), travelNotice.toExternalApiRequest());
+            if (apiResponse.response.equals("CRIADO")) entityManager.persist(travelNotice);
+        } catch (Exception e) {
+            return ResponseEntity.unprocessableEntity().build();
+        }
 
         return ResponseEntity.ok().build();
 

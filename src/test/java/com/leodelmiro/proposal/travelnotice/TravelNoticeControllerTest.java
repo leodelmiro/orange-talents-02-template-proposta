@@ -2,6 +2,9 @@ package com.leodelmiro.proposal.travelnotice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leodelmiro.proposal.block.CardBlockResponse;
+import com.leodelmiro.proposal.cards.CardsClient;
+import feign.FeignException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +14,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -22,6 +26,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,6 +47,9 @@ class TravelNoticeControllerTest {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @MockBean
+    private CardsClient cardsClient;
+
     private String jsonBody;
 
     @BeforeEach
@@ -52,6 +62,8 @@ class TravelNoticeControllerTest {
     @DisplayName("deveria retornar 200 quando tudo Ok")
     @WithMockUser
     void shouldReturn200WhenOk() throws Exception {
+        when(cardsClient.notices(eq("2"), any())).thenReturn(new TravelNoticesApiResponse("CRIADO"));
+
         mockMvc.perform(post("/api/cards/2/travelnotices")
                 .header(HttpHeaders.USER_AGENT, "User-Agent")
                 .content(jsonBody)
@@ -63,6 +75,22 @@ class TravelNoticeControllerTest {
         Assertions.assertEquals("Teste", result.getDestiny());
         Assertions.assertEquals("User-Agent", result.getUserAgent());
         Assertions.assertEquals(LocalDate.MAX, result.getEndDate());
+    }
+
+    @Test
+    @DisplayName("deveria retornar 422 quando der erro na API externa")
+    @WithMockUser
+    void shouldReturn422WhenExternalApiError() throws Exception {
+        when(cardsClient.notices(eq("2"), any())).thenThrow(FeignException.class);
+
+        mockMvc.perform(post("/api/cards/2/travelnotices")
+                .header(HttpHeaders.USER_AGENT, "User-Agent")
+                .content(jsonBody)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnprocessableEntity());
+
+        TravelNotice result = entityManager.find(TravelNotice.class, 1L);
+        Assertions.assertNull(result);
     }
 
     @ParameterizedTest

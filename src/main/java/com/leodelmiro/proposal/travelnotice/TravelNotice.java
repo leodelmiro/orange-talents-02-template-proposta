@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "tb_travelnotices")
@@ -62,5 +63,22 @@ public class TravelNotice {
 
     public String getUserIp() {
         return userIp;
+    }
+
+    public TravelNoticesApiRequest toExternalApiRequest() {
+        return new TravelNoticesApiRequest(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TravelNotice that = (TravelNotice) o;
+        return Objects.equals(card, that.card) && Objects.equals(destiny, that.destiny) && Objects.equals(endDate, that.endDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(card, destiny, endDate);
     }
 }

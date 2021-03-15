@@ -5,6 +5,7 @@ import com.leodelmiro.proposal.block.CardBlock;
 import com.leodelmiro.proposal.block.CardBlockRequest;
 import com.leodelmiro.proposal.block.CardBlockResponse;
 import com.leodelmiro.proposal.proposal.Proposal;
+import com.leodelmiro.proposal.travelnotice.TravelNotice;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -36,11 +37,14 @@ public class Card {
     @JoinColumn(name = "proposal_id")
     private Proposal proposal;
 
-    @OneToMany(mappedBy = "card", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "card")
     private Set<Biometry> biometrics = new HashSet<>();
 
-    @OneToOne(mappedBy = "card", cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "card")
     private CardBlock cardBlock;
+
+    @OneToMany(mappedBy = "card")
+    private Set<TravelNotice> travelNotices = new HashSet<>();
 
     /**
      *

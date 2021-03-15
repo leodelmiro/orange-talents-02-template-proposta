@@ -1,9 +1,7 @@
-package com.leodelmiro.proposal.block;
+package com.leodelmiro.proposal.travelnotice;
 
 import com.leodelmiro.proposal.cards.Card;
-import com.leodelmiro.proposal.cards.CardsClient;
 import com.leodelmiro.proposal.common.utils.ClientHostResolver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,20 +14,17 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/cards")
-public class CardBlockController {
+public class TravelNoticeController {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    private CardsClient cardsClient;
-
-    @PostMapping("/{cardId}/block")
+    @PostMapping("/{cardId}/travelnotices")
     @Transactional
-    public ResponseEntity<?> blockCard(@PathVariable Long cardId,
-                                       @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
-                                       @RequestBody @Valid CardBlockRequest request,
-                                       HttpServletRequest requestInfo) {
+    public ResponseEntity<?> travelNotice(@PathVariable Long cardId,
+                                          @RequestHeader(HttpHeaders.USER_AGENT) String userAgent,
+                                          @RequestBody @Valid TravelNoticeRequest request,
+                                          HttpServletRequest requestInfo) {
 
         Card card = entityManager.find(Card.class, cardId);
         if (card == null) {
@@ -38,23 +33,16 @@ public class CardBlockController {
 
         String userIp = new ClientHostResolver(requestInfo).resolve();
 
+
         if (isBlankUser(userAgent, userIp)) {
             return ResponseEntity.badRequest().build();
         }
 
-        if (card.isAlreadyBlocked()) {
-            return ResponseEntity.unprocessableEntity().build();
-        }
-
-        try {
-            card.updateStatus(cardsClient, request);
-            CardBlock cardBlock = new CardBlock(card, userIp, userAgent);
-            entityManager.persist(cardBlock);
-        } catch (Exception e) {
-            return ResponseEntity.unprocessableEntity().build();
-        }
+        TravelNotice travelNotice = request.toModel(card, userAgent, userIp);
+        entityManager.persist(travelNotice);
 
         return ResponseEntity.ok().build();
+
     }
 
     private boolean isBlankUser(String userAgent, String userIp) {

@@ -92,7 +92,7 @@ public class Card {
     }
 
     public void updateStatus(CardsClient client, CardBlockRequest request) throws Exception{
-        CardBlockResponse response = client.blockCard(id.toString(), request);
+        CardBlockResponse response = client.blockCard(cardNumber, request);
 
         this.status = response.toCardStatus();
     }

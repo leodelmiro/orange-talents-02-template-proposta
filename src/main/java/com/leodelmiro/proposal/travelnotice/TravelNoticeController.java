@@ -45,7 +45,7 @@ public class TravelNoticeController {
 
         try {
             TravelNotice travelNotice = request.toModel(card, userAgent, userIp);
-            TravelNoticesApiResponse apiResponse = cardsClient.notices(cardId.toString(), travelNotice.toExternalApiRequest());
+            TravelNoticesApiResponse apiResponse = cardsClient.notices(card.getCardNumber(), travelNotice.toExternalApiRequest());
             if (apiResponse.response.equals("CRIADO")) entityManager.persist(travelNotice);
         } catch (Exception e) {
             return ResponseEntity.unprocessableEntity().build();

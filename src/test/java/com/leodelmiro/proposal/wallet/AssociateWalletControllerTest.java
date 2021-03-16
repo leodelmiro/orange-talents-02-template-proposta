@@ -60,7 +60,7 @@ class AssociateWalletControllerTest {
     @DisplayName("deveria retornar 201 quando tudo estiver Ok")
     @WithMockUser
     void shouldReturn201WhenOk() throws Exception {
-        when(cardsClient.walletAssociation(eq("5209-1622-1164-9999"), any())).thenReturn(new WalletResponse("ASSOCIADA"));
+        when(cardsClient.walletAssociation(eq("5209-1622-1164-9999"), any())).thenReturn(new WalletResponse("ASSOCIADA", "AAAA-BBBB-CCCC-DDDD"));
 
         mockMvc.perform(post("/api/cards/3/wallets")
                 .content(jsonBody)
@@ -109,6 +109,20 @@ class AssociateWalletControllerTest {
     @DisplayName("deveria retornar 422 quando já existir cartão associado a mesma carteira")
     @WithMockUser
     void shouldReturn422WhenAssociateCardToSameWalletService() throws Exception {
+        mockMvc.perform(post("/api/cards/2/wallets")
+                .content(jsonBody)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    @DisplayName("deveria retornar 201 quando não for o mesmo tipo de carteira")
+    @WithMockUser
+    void shouldReturn201WhenAssociateCardToOtherWalletService() throws Exception {
+        WalletRequest request = new WalletRequest("email@email.com", WalletServices.SAMSUNG_PAY);
+        String jsonContent = objectMapper.writeValueAsString(request);
+        when(cardsClient.walletAssociation(eq("5209-1622-1164-9999"), any())).thenReturn(new WalletResponse("ASSOCIADA", "AAAA-BBBB-CCCC-DDDD"));
+
         mockMvc.perform(post("/api/cards/2/wallets")
                 .content(jsonBody)
                 .contentType(MediaType.APPLICATION_JSON)

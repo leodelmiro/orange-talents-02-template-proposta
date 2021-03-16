@@ -41,7 +41,7 @@ public class ProposalController {
         try {
             proposal.updateStatus(financialAnalysisClient);
         } catch (HystrixRuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Erro na Api de cartões");
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Erro na Api de análise do cliente");
         }
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(proposal.getId()).toUri();

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leodelmiro.proposal.block.CardBlockResponse;
 import com.leodelmiro.proposal.cards.CardsClient;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 import feign.FeignException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,7 +82,7 @@ class TravelNoticeControllerTest {
     @DisplayName("deveria retornar 422 quando der erro na API externa")
     @WithMockUser
     void shouldReturn422WhenExternalApiError() throws Exception {
-        when(cardsClient.notices(eq("2"), any())).thenThrow(FeignException.class);
+        when(cardsClient.notices(eq("5209-1622-1164-6666"), any())).thenThrow(FeignException.class);
 
         mockMvc.perform(post("/api/cards/2/travelnotices")
                 .header(HttpHeaders.USER_AGENT, "User-Agent")
@@ -89,7 +90,7 @@ class TravelNoticeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isUnprocessableEntity());
 
-        TravelNotice result = entityManager.find(TravelNotice.class, 1L);
+        TravelNotice result = entityManager.find(TravelNotice.class, 2L);
         Assertions.assertNull(result);
     }
 

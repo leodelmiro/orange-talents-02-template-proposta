@@ -21,5 +21,5 @@ VALUES (1, 1, '0.0.0.0.0', 'User-Agent', '2021-03-10T08:47:08.644');
 
 UPDATE tb_cards SET status = 'BLOCKED' WHERE id = 1;
 
-INSERT INTO tb_wallets(id, email, wallet_service, card_id)
-VALUES (1, 'email@email.com', 'PAYPAL', 2);
+INSERT INTO tb_wallets(id,association_id, email, wallet_service, card_id)
+VALUES (1, 'd52tes68-3t32-4df7-a1w7-49a53l0l52et','email@email.com', 'PAYPAL', 2);

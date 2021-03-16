@@ -3,6 +3,8 @@ package com.leodelmiro.proposal.travelnotice;
 import com.leodelmiro.proposal.cards.Card;
 import com.leodelmiro.proposal.cards.CardsClient;
 import com.leodelmiro.proposal.common.utils.ClientHostResolver;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
+import com.netflix.hystrix.exception.HystrixTimeoutException;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -49,8 +51,8 @@ public class TravelNoticeController {
         try {
             TravelNotice travelNotice = request.toModel(card, userAgent, userIp);
             TravelNoticesApiResponse apiResponse = cardsClient.notices(card.getCardNumber(), travelNotice.toExternalApiRequest());
-            if (apiResponse.response.equals("CRIADO")) entityManager.merge(travelNotice);
-        } catch (Exception e) {
+            if (apiResponse.response.equals("CRIADO")) entityManager.persist(travelNotice);
+        } catch (FeignException | HystrixRuntimeException e) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Erro na api de notificação de viagem, tente novamente!");
         }
 

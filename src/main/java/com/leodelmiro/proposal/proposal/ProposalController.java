@@ -2,6 +2,8 @@ package com.leodelmiro.proposal.proposal;
 
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisClient;
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisResponse;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
+import com.netflix.hystrix.exception.HystrixTimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 
 @RestController
 @RequestMapping("/api/proposals")
@@ -35,7 +38,11 @@ public class ProposalController {
 
         Proposal proposal = repository.save(request.toModel());
 
-        proposal.updateStatus(financialAnalysisClient);
+        try {
+            proposal.updateStatus(financialAnalysisClient);
+        } catch (HystrixRuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Erro na Api de cartões");
+        }
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(proposal.getId()).toUri();
         return ResponseEntity.created(uri).build();

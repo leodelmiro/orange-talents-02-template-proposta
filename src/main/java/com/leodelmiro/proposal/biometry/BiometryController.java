@@ -27,7 +27,7 @@ public class BiometryController {
         }
 
         Biometry biometry = request.toModel(possibleCard);
-        entityManager.merge(biometry);
+        entityManager.persist(biometry);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentServletMapping().pathSegment("api/biometrics/{id}").buildAndExpand(biometry.getId()).toUri();
         return ResponseEntity.created(uri).build();

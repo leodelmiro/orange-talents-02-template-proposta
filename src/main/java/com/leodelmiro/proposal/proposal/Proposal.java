@@ -8,12 +8,15 @@ import com.leodelmiro.proposal.common.validation.CPForCNPJ;
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisClient;
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisRequest;
 import com.leodelmiro.proposal.financialanalysis.FinancialAnalysisResponse;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
+import com.netflix.hystrix.exception.HystrixTimeoutException;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeoutException;
 
 @Entity
 @Table(name = "tb_proposals")
@@ -115,7 +118,7 @@ public class Proposal {
         return createdAt;
     }
 
-    public void updateStatus(FinancialAnalysisClient client) {
+    public void updateStatus(FinancialAnalysisClient client) throws HystrixRuntimeException {
         FinancialAnalysisResponse response = client.financialAnalysis(toFinancialAnalysis());
         this.status = response.statusToProposalStatus();
     }

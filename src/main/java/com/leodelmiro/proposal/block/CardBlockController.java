@@ -3,6 +3,7 @@ package com.leodelmiro.proposal.block;
 import com.leodelmiro.proposal.cards.Card;
 import com.leodelmiro.proposal.cards.CardsClient;
 import com.leodelmiro.proposal.common.utils.ClientHostResolver;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -34,8 +35,8 @@ public class CardBlockController {
                                        @RequestBody @Valid CardBlockRequest request,
                                        HttpServletRequest requestInfo) {
 
-        Card card = entityManager.find(Card.class, cardId);
-        if (card == null) {
+        Card possibleCard = entityManager.find(Card.class, cardId);
+        if (possibleCard == null) {
             return ResponseEntity.notFound().build();
         }
 
@@ -45,16 +46,16 @@ public class CardBlockController {
             return ResponseEntity.badRequest().build();
         }
 
-        if (card.isAlreadyBlocked()) {
+        if (possibleCard.isAlreadyBlocked()) {
             return ResponseEntity.unprocessableEntity().build();
         }
 
         try {
-            card.updateStatus(cardsClient, request);
-            CardBlock cardBlock = new CardBlock(card, userIp, userAgent);
-            entityManager.merge(cardBlock);
-        } catch (FeignException e) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Erro na api de bloquei, tente novamente!");
+            possibleCard.updateStatus(cardsClient, request);
+            CardBlock cardBlock = new CardBlock(possibleCard, userIp, userAgent);
+            entityManager.persist(cardBlock);
+        } catch (FeignException | HystrixRuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Erro na api de bloqueio, tente novamente!");
         }
 
         return ResponseEntity.ok().build();

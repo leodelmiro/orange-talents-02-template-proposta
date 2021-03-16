@@ -8,6 +8,7 @@ import com.leodelmiro.proposal.proposal.Proposal;
 import com.leodelmiro.proposal.travelnotice.TravelNotice;
 import com.leodelmiro.proposal.wallet.Wallet;
 import com.leodelmiro.proposal.wallet.WalletServices;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 import feign.FeignException;
 import org.springframework.util.Assert;
 
@@ -52,16 +53,16 @@ public class Card {
     @JoinColumn(name = "proposal_id", nullable = false)
     private Proposal proposal;
 
-    @OneToMany(mappedBy = "card", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "card")
     private Set<Biometry> biometrics = new HashSet<>();
 
-    @OneToOne(mappedBy = "card", cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "card")
     private CardBlock cardBlock;
 
-    @OneToMany(mappedBy = "card", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "card")
     private Set<TravelNotice> travelNotices = new HashSet<>();
 
-    @OneToMany(mappedBy = "card", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "card")
     private Set<Wallet> wallets = new HashSet<>();
 
     /**
@@ -130,7 +131,7 @@ public class Card {
         return status == CardStatus.BLOCKED;
     }
 
-    public void updateStatus(CardsClient client, CardBlockRequest request) throws FeignException {
+    public void updateStatus(CardsClient client, CardBlockRequest request) throws FeignException, HystrixRuntimeException {
         CardBlockResponse response = client.blockCard(cardNumber, request);
 
         this.status = response.toCardStatus();

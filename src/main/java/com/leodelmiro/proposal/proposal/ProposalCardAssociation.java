@@ -1,6 +1,7 @@
 package com.leodelmiro.proposal.proposal;
 
 import com.leodelmiro.proposal.cards.CardsClient;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ public class ProposalCardAssociation {
 
     private static final Logger log = LoggerFactory.getLogger(ProposalCardAssociation.class);
 
-
     @Transactional
     @Scheduled(fixedDelayString = "${timing.fixedDelay}", initialDelayString = "${timing.initialDelay}")
     public void associateCard() {
@@ -31,11 +31,14 @@ public class ProposalCardAssociation {
         if (!pendentsCard.isEmpty()) {
             Proposal proposal = pendentsCard.get(0);
 
-            proposal.associateCard(cardsClient);
-            repository.save(proposal);
-            pendentsCard.remove(0);
-
-            log.info("Cartão cadastrado com sucesso!");
+            try {
+                proposal.associateCard(cardsClient);
+                repository.save(proposal);
+                pendentsCard.remove(0);
+                log.info("Cartão cadastrado com sucesso!");
+            } catch (HystrixRuntimeException e) {
+                log.error("Erro na Api de cartões!");
+            }
         }
     }
 }

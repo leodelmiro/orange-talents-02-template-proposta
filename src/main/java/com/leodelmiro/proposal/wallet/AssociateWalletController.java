@@ -2,6 +2,8 @@ package com.leodelmiro.proposal.wallet;
 
 import com.leodelmiro.proposal.cards.Card;
 import com.leodelmiro.proposal.cards.CardsClient;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +43,8 @@ public class AssociateWalletController {
         Wallet wallet = request.toModel(card);
         try {
             WalletResponse response = cardsClient.walletAssociation(card.getCardNumber(), request);
-            if (response.getResponse().equals("ASSOCIADA")) entityManager.merge(wallet);
-        } catch (Exception e) {
+            if (response.getResponse().equals("ASSOCIADA")) entityManager.persist(wallet);
+        } catch (FeignException | HystrixRuntimeException e) {
             throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Erro na api de carteira, tente novamente!");
         }
 

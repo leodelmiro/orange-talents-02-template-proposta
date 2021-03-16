@@ -18,15 +18,15 @@ public class Biometry {
     private Long id;
 
     @NotBlank
-    @Column(columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String fingerprint;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "card_id")
+    @JoinColumn(nullable = false, name = "card_id")
     private Card card;
 
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     /**

@@ -19,16 +19,18 @@ public class CardBlock {
 
     @NotNull
     @OneToOne
-    @JoinColumn(name = "card_id")
+    @JoinColumn(name = "card_id", nullable = false)
     private Card card;
 
     @NotBlank
+    @Column(nullable = false)
     private String userIp;
 
     @NotBlank
+    @Column(nullable = false)
     private String userAgent;
 
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     /**

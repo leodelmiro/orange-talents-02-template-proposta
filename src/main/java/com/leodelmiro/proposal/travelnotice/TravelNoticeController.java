@@ -3,11 +3,14 @@ package com.leodelmiro.proposal.travelnotice;
 import com.leodelmiro.proposal.cards.Card;
 import com.leodelmiro.proposal.cards.CardsClient;
 import com.leodelmiro.proposal.common.utils.ClientHostResolver;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -46,9 +49,9 @@ public class TravelNoticeController {
         try {
             TravelNotice travelNotice = request.toModel(card, userAgent, userIp);
             TravelNoticesApiResponse apiResponse = cardsClient.notices(card.getCardNumber(), travelNotice.toExternalApiRequest());
-            if (apiResponse.response.equals("CRIADO")) entityManager.persist(travelNotice);
+            if (apiResponse.response.equals("CRIADO")) entityManager.merge(travelNotice);
         } catch (Exception e) {
-            return ResponseEntity.unprocessableEntity().build();
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Erro na api de notificação de viagem, tente novamente!");
         }
 
         return ResponseEntity.ok().build();

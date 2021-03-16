@@ -1,13 +1,10 @@
 package com.leodelmiro.proposal.block;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.validation.constraints.NotBlank;
 
 public class CardBlockRequest {
 
     @NotBlank
-    @JsonProperty("sistemaResponsavel")
     private String responsibleSystem;
 
     /**
@@ -20,5 +17,9 @@ public class CardBlockRequest {
 
     public CardBlockRequest(@NotBlank String responsibleSystem) {
         this.responsibleSystem = responsibleSystem;
+    }
+
+    public String getResponsibleSystem() {
+        return responsibleSystem;
     }
 }

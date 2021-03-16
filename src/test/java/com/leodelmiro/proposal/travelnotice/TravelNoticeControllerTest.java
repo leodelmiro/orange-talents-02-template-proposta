@@ -62,7 +62,7 @@ class TravelNoticeControllerTest {
     @DisplayName("deveria retornar 200 quando tudo Ok")
     @WithMockUser
     void shouldReturn200WhenOk() throws Exception {
-        when(cardsClient.notices(eq("2"), any())).thenReturn(new TravelNoticesApiResponse("CRIADO"));
+        when(cardsClient.notices(eq("5209-1622-1164-6666"), any())).thenReturn(new TravelNoticesApiResponse("CRIADO"));
 
         mockMvc.perform(post("/api/cards/2/travelnotices")
                 .header(HttpHeaders.USER_AGENT, "User-Agent")

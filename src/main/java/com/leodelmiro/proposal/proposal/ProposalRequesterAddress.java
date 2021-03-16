@@ -1,5 +1,6 @@
 package com.leodelmiro.proposal.proposal;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotBlank;
 
@@ -7,12 +8,15 @@ import javax.validation.constraints.NotBlank;
 public class ProposalRequesterAddress {
 
     @NotBlank
+    @Column(nullable = false)
     private String address;
 
     @NotBlank
+    @Column(nullable = false)
     private String number;
 
     @NotBlank
+    @Column(nullable = false)
     private String cep;
 
     /**

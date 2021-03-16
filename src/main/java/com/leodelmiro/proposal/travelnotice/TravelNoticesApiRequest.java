@@ -19,4 +19,11 @@ public class TravelNoticesApiRequest {
         this.endDate = entity.getEndDate();
     }
 
+    public String getDestiny() {
+        return destiny;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
 }

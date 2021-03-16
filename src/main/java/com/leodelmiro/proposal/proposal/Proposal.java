@@ -25,31 +25,37 @@ public class Proposal {
 
     @CPForCNPJ
     @NotBlank
+    @Column(nullable = false)
     private String document;
 
     @NotBlank
     @Email
+    @Column(nullable = false)
     private String email;
 
     @NotBlank
+    @Column(nullable = false)
     private String name;
 
     @NotNull
     @Embedded
+    @Column(nullable = false)
     private ProposalRequesterAddress address;
 
     @Positive
     @NotNull
+    @Column(nullable = false)
     private BigDecimal salary;
 
     @Enumerated(EnumType.STRING)
-    private ProposalStatus status;
+    @Column(nullable = false)
+    private ProposalStatus status = ProposalStatus.NOT_ELIGIBLE;
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "card_id")
     private Card card;
 
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     /**

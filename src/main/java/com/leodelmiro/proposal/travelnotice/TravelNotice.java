@@ -40,6 +40,14 @@ public class TravelNotice {
     @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    /**
+     * @Deprecated for framework use onlt
+     */
+    @Deprecated
+    public TravelNotice() {
+
+    }
+
     public TravelNotice(@NotNull @Valid Card card, @NotBlank String destiny, @NotNull @Future LocalDate endDate,
                         String userAgent, String userIp) {
         this.card = card;

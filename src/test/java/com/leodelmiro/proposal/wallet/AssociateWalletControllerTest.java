@@ -1,4 +1,4 @@
-package com.leodelmiro.proposal.block;
+package com.leodelmiro.proposal.wallet;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,13 +7,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
@@ -28,19 +25,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("test")
-class CardBlockControllerTest {
+@AutoConfigureMockMvc
+class AssociateWalletControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -48,75 +43,76 @@ class CardBlockControllerTest {
     @MockBean
     private CardsClient cardsClient;
 
-    private CardBlockRequest request;
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private WalletRequest request;
     private String jsonBody;
+
 
     @BeforeEach
     void init() throws JsonProcessingException {
-        CardBlockRequest request = new CardBlockRequest("Teste");
+        request = new WalletRequest("email@email.com", WalletServices.PAYPAL);
         jsonBody = objectMapper.writeValueAsString(request);
     }
 
     @Test
-    @DisplayName("Deveria bloquear cartão e retornar 200")
+    @DisplayName("deveria retornar 201 quando tudo estiver Ok")
     @WithMockUser
-    void blockCardShouldBlockCardWhenOk() throws Exception {
-        when(cardsClient.blockCard(eq("5209-1622-1164-6666"), any())).thenReturn(new CardBlockResponse("BLOQUEADO"));
+    void shouldReturn201WhenOk() throws Exception {
+        when(cardsClient.walletAssociation(eq("5209-1622-1164-9999"), any())).thenReturn(new WalletResponse("ASSOCIADA"));
 
-        mockMvc.perform(post("/api/cards/2/block")
-                .header(HttpHeaders.USER_AGENT, "User-Agent")
+        mockMvc.perform(post("/api/cards/3/wallets")
                 .content(jsonBody)
                 .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
+        )
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"));
 
-        CardBlock result = entityManager.find(CardBlock.class, 2L);
+        Wallet result = entityManager.find(Wallet.class, 2L);
         Assertions.assertNotNull(result);
-        Assertions.assertEquals("User-Agent", ReflectionTestUtils.getField(result, "userAgent"));
+        Assertions.assertEquals(request.getEmail(), ReflectionTestUtils.getField(result, "email"));
+        Assertions.assertEquals(request.getWallet(), result.getWalletService());
     }
 
     @Test
-    @DisplayName("Deveria retornar 404 quando cartão não encontrado")
+    @DisplayName("deveria retornar 400 quando alguns dado informado for inválido")
     @WithMockUser
-    void blockCardShouldReturn404WhenCardNotFound() throws Exception {
+    void shouldReturn400WhenAnyInvalidInputData() throws Exception {
+        WalletRequest request = new WalletRequest("  ", WalletServices.PAYPAL);
+        String jsonContent = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/cards/1000/block")
-                .header(HttpHeaders.USER_AGENT, "User-Agent")
+        mockMvc.perform(post("/api/cards/2/wallets")
+                .content(jsonContent)
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest());
+
+        Wallet result = entityManager.find(Wallet.class, 2L);
+        Assertions.assertNull(result);
+
+    }
+
+    @Test
+    @DisplayName("deveria retornar 404 quando cartão não for encontrado")
+    @WithMockUser
+    void shouldReturn404WhenCardNotFound() throws Exception {
+        mockMvc.perform(post("/api/cards/1000/wallets")
                 .content(jsonBody)
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isNotFound());
 
-
-        CardBlock result = entityManager.find(CardBlock.class, 1000L);
-        Assertions.assertNull(result);
-    }
-
-    @ParameterizedTest
-    @DisplayName("Deveria retornar 400 quando for passado algum dado invalido")
-    @WithMockUser
-    @CsvSource({"User-agent, ''", "'' , {'sistemaResponsavel': 'Teste'}"})
-    void blockCardShouldReturn400WhenAnyInvalidParam(String userAgent, String jsonBody) throws Exception {
-
-        mockMvc.perform(post("/api/cards/2/block")
-                .header(HttpHeaders.USER_AGENT, userAgent)
-                .content(jsonBody)
-                .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isBadRequest());
-
-
-        CardBlock result = entityManager.find(CardBlock.class, 2L);
+        Wallet result = entityManager.find(Wallet.class, 1000L);
         Assertions.assertNull(result);
     }
 
     @Test
-    @DisplayName("Deveria retornar 422 quando cartão já estiver bloqueado")
+    @DisplayName("deveria retornar 422 quando já existir cartão associado a mesma carteira")
     @WithMockUser
-    void blockCardShouldReturn422WhenCardAlreadyBlocked() throws Exception {
-
-        mockMvc.perform(post("/api/cards/1/block")
-                .header(HttpHeaders.USER_AGENT, "User-Agent")
+    void shouldReturn422WhenAssociateCardToSameWalletService() throws Exception {
+        mockMvc.perform(post("/api/cards/2/wallets")
                 .content(jsonBody)
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isUnprocessableEntity());
-
     }
+
 }
